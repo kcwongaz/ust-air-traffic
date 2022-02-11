@@ -124,6 +124,12 @@ for root, dirs, files in os.walk(dataroot):
                     if not isinstance(item, list):
                         continue
 
+                    # The data row also need to have the correct length
+                    # Expecting length 18, but some can have 19 for some reason
+                    if len(item) < 18:
+                        log_writer.write(f"Error encountered on: {fname} \r\n")
+                        continue
+
                     # Pick only flights that are coming to HK
                     if item[12] != "HKG":
                         continue

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 fname = "/home/kc/Research/air_traffic/data/opensky_clean/time_distance.txt"
-sdir = "/home/kc/Research/air_traffic/figures/2022-01-18"
+sdir = "/home/kc/Research/air_traffic/figures/2022-02-15"
 
 filters = {"upper_t": True}
 
@@ -14,10 +14,12 @@ plt.rcParams.update({
 )
 # --------------------------------------------------------------------------- # 
 df_all = pd.read_csv(fname, header=0)
-df_all["t_i"] = df_all["t_i"] + 8*3600  # Hong Kong time is UTC+8
+
+# Hong Kong time is UTC+8
+df_all["t_i"] = df_all["t_i"] + 8*3600  
 timestamps = pd.to_datetime(df_all["t_i"], unit="s")
 df_all = df_all.assign(hour=timestamps.dt.hour)
-# df_all["hour"] = (df_all["hour"] + 8) % 23
+
 
 if filters["upper_t"]:
     df_all = df_all.loc[df_all["delta_t_sec"] / 60 < 800]

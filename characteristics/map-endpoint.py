@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 fname = "/home/kc/Research/air_traffic/data/opensky_all_endpoints.csv"
-savedir = "/home/kc/Research/air_traffic/figures/2022-01-11/"
+savedir = "/home/kc/Research/air_traffic/figures/2022-02-15/"
 
 mode = "runway"   # one of ["full", "close", "runway"]
 sname = f"endpoints_all_{mode}_test.png"
@@ -27,9 +27,9 @@ if mode == "full":
 elif mode == "close":
     ax.set_extent([113,115, 21, 23], ccrs.PlateCarree())
 elif mode == "runway":
-    ax.set_extent([113.918480-0.25, 113.918480+0.25, 
+    ax.set_extent([113.918480-0.25, 113.918480+0.25,
                    22.308046-0.25, 22.308046+0.25], ccrs.PlateCarree())
-else: 
+else:
     ax.set_extent([111, 117.5, 19, 25.5], ccrs.PlateCarree())
 
 ax.add_feature(cfeature.LAND)
@@ -52,9 +52,8 @@ ax.plot([hklon], [hklat], "^", ms=2, color="red", fillstyle="none",
 # ax.add_patch(rect)
 
 rect = plt.Rectangle((hklon - 0.1, hklat - 0.05), 0.2, 0.1,
-                    linewidth=1, edgecolor="red", facecolor="none", zorder=2)
+                     linewidth=1, edgecolor="red", facecolor="none", zorder=2)
 ax.add_patch(rect)
-
 
 
 # Draw gridlines

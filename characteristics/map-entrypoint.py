@@ -48,9 +48,8 @@ ax.plot([hklon], [hklat], "^", ms=2, color="red", fillstyle="none",
 
 # # Box around the filter region
 rect = plt.Rectangle((hklon - 0.25, hklat - 0.25), 0.5, 0.5,
-                    linewidth=1, edgecolor="red", facecolor="none", zorder=2)
+                     linewidth=1, edgecolor="red", facecolor="none", zorder=2)
 ax.add_patch(rect)
-
 
 
 # Draw gridlines
