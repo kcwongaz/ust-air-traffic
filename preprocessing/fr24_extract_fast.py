@@ -83,9 +83,17 @@ for root, dirs, files in os.walk(dataroot):
 
     # 2. Unzip all the copied .zip files
     for file in os.listdir(tempdir):
-        if file.endswith(".zip"):
-            with zipfile.ZipFile(os.path.join(tempdir, file), "r") as zf:
-                zf.extractall(tempdir)
+        if not file.endswith(".zip"):
+            continue
+
+        # Have to unzip file one-by-one, because some files may contain error
+        zf = zipfile.ZipFile(os.path.join(tempdir, file), "r")
+        for zf_child in zf.namelist():
+            try:
+                zf.extract(zf_child, tempdir)
+            except zipfile.BadZipFile:
+                log_writer.write(f"Error unzipping {zf}/{zf_child} \r\n")
+        zf.close()
 
     # 3. Now loop through the unzipped .json file to extract flights
     for troot, tdirs, tfiles in os.walk(tempdir):
@@ -96,12 +104,16 @@ for root, dirs, files in os.walk(dataroot):
             if not tfile.endswith(".json") and not tfile.endswith(".txt"):
                 continue
             fname = os.path.join(troot, tfile)
-            print(fname)
+
+            if os.stat(fname).st_size == 0:
+                log_writer.write(f"Empty JSON file: {fname} \r\n")
+                continue
 
             with open(fname, "r") as f:
                 try:
                     json_data = json.load(f)
                     timestamp_fetched = False
+                    print(fname)
                 except json.JSONDecodeError:
                     log_writer.write(f"Error encountered on: {fname} \r\n")
                     continue
