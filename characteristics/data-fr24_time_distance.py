@@ -1,11 +1,13 @@
 import pandas as pd
 import os
+import numpy as np
 from geopy import distance
 
 
-label = "usa"
+label = "china"
 datadir = f"/home/kc/Research/air_traffic/data/fr24_{label}/"
-savename = f"/home/kc/Research/air_traffic/data/fr24_stat/time_distance_{label}.txt"
+savedir = "/home/kc/Research/air_traffic/data/fr24_stat"
+savename = f"{savedir}/time_distance_{label}_filtered.txt"
 
 
 # --------------------------------------------------------------------------- #
@@ -44,6 +46,10 @@ for subdir, dirs, files in os.walk(datadir):
 
         first = df.iloc[0]
         last = df.iloc[-1]
+
+        if (np.abs(last["latitude"] - hkia[0]) > 0.25) and \
+           (np.abs(last["longitude"] - hkia[1]) > 0.25):
+            continue
 
         # Get the date at HK time
         date = pd.Timestamp(first["time"] + 8*3600, unit="s").strftime("%Y-%m-%d")

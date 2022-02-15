@@ -3,11 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-fname = "/home/kc/Research/air_traffic/data/opensky_clean/time_distance.txt"
-filters = {"lower_r": False, "upper_t": True}
+fname = "/home/kc/Research/air_traffic/data/fr24_stat/time_distance_china_filtered.txt"
+filters = {"lower_r": False, "upper_t": False}
 
-sdir = "/home/kc/Research/air_traffic/figures/2022-01-11"
-sname = "time_distance_filtered.png"
+sdir = "/home/kc/Research/air_traffic/figures/2022-02-15"
+sname = "time_distance"
 
 # --------------------------------------------------------------------------- #
 df = pd.read_csv(fname, header=0)
@@ -45,6 +45,8 @@ ax.set_xlabel("Distance (km)", fontsize=20)
 ax.set_ylabel("Time Difference (min)", fontsize=20)
 ax.tick_params(which="both", direction="in", labelsize=14)
 
+ax.set_ylim(0, 1250)
+
 
 plt.tight_layout()
-plt.savefig(f"{sdir}/{sname}", dpi=300)
+plt.savefig(f"{sdir}/{sname}_test.png", dpi=300)
