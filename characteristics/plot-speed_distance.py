@@ -109,7 +109,6 @@ if mode == "speed":
             ax.annotate(rf"$v = {amp} \cdot d^{{{alpha}}}$", (10, 10),
                         fontsize=11)
 
-
         if fits["upper_sqrt"]:
             ind = np.where(delta_r >= 10)
             logx = np.log(delta_r[ind])

@@ -3,8 +3,9 @@ import os
 from geopy import distance
 
 
-datadir = "/home/kc/Research/air_traffic/data/fr24_extracted/"
-savename = "/home/kc/Research/air_traffic/data/fr24_extracted/time_distance.txt"
+label = "usa"
+datadir = f"/home/kc/Research/air_traffic/data/fr24_{label}/"
+savename = f"/home/kc/Research/air_traffic/data/fr24_stat/time_distance_{label}.txt"
 
 
 # --------------------------------------------------------------------------- #

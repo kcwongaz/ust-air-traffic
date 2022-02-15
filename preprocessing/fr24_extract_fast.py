@@ -15,10 +15,10 @@ from FR24Writer import FR24Writer
 # (e.g. 01.tar.bz2, 02.zip, etc.)
 # So that the directories have all the yyyymmdd.zip files.
 # Make sure all yyyymmdd.zip are there, or you will miss some time points.
-dataroot = "/mnt/Passport/Lishuai_data/china"
+dataroot = "/mnt/Passport/Lishuai_data/USA"
 
 # Locations to store data to
-saveroot = "/home/kc/Research/air_traffic/data/fr24_extracted"
+saveroot = "/home/kc/Research/air_traffic/data/fr24_usa"
 
 # Location for a pickled FR24Writer object to be restored.
 # This is for continuing a partial flight extraction.
