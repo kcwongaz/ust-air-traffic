@@ -47,6 +47,7 @@ for subdir, dirs, files in os.walk(datadir):
         first = df.iloc[0]
         last = df.iloc[-1]
 
+        # Filter those points that are not in the square
         if (np.abs(last["latitude"] - hkia[0]) > 0.25) and \
            (np.abs(last["longitude"] - hkia[1]) > 0.25):
             continue

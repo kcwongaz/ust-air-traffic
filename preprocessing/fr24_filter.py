@@ -2,21 +2,22 @@ import numpy as np
 import pandas as pd
 import os
 
-from opensky_checkers import *
+from fr24_checkers import *
 
 
 # --------------------------------------------------------------------------- #
 
 # Will apply filter to all trajectories within this date range
-start_date = "2019-05-01"
-end_date = "2019-06-25"
+start_date = "2016-12-31"
+end_date = "2021-04-28"
+
 
 # (!) Change the following to appropriate directory names
 # Location of raw data
-dataroot = "/mnt/Passport/Opensky/Full_Track_Data/"
+dataroot = "/home/kc/Research/air_traffic/data/fr24_china/"
 
 # Location for output
-copyroot = "/home/kc/Research/air_traffic/data/opensky_clean/"
+copyroot = "/home/kc/Research/air_traffic/data/fr24_clean/"
 
 # mode should be in of ["copy", "list", ""]
 # "copy" will create a filtered copy of the data in copyroot
@@ -60,8 +61,9 @@ if mode == "list":
 
 while date <= end:
     dstr = date.strftime(date_fmt)
-    datadir = dataroot + dstr
-    copydir = copyroot + dstr
+    mstr = date.strftime("%Y-%m")
+    datadir = dataroot + mstr + "/" + dstr
+    copydir = copyroot + mstr + "/" + dstr
 
     # Create destination directory if not exist
     if not os.path.exists(copydir) and mode == "copy":
@@ -77,7 +79,11 @@ while date <= end:
     for subdir, dirs, files in os.walk(datadir):
         for file in files:
             fname = os.path.join(subdir, file)
-            df = pd.read_csv(fname, header=0, index_col=0)
+            df = pd.read_csv(fname, header=0)
+
+            # FR24 sometime has duplicated rows
+            # I would forgive them if they have identical space-time coordinate
+            df = df.drop_duplicates(subset=["time", "latitude", "longitude"])
 
             total += 1
             total_all += 1

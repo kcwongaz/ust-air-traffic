@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def check_arrivial(df, last_n=10, tol_lat=0.25, tol_lon=0.25):
+def check_arrivial(df, last_n=1, tol_lat=0.25, tol_lon=0.25):
     """
     Check if the trajectory lands around HK, return True if it does. 
     """
@@ -20,7 +20,7 @@ def check_arrivial(df, last_n=10, tol_lat=0.25, tol_lon=0.25):
     return value
 
 
-def check_nondeparture(df, first_n=10, tol_lat=0.25, tol_lon=0.25):
+def check_nondeparture(df, first_n=1, tol_lat=0.25, tol_lon=0.25):
     """
     Check if the trajectory departs from HK, return True if it does not.
     """
@@ -38,7 +38,7 @@ def check_nondeparture(df, first_n=10, tol_lat=0.25, tol_lon=0.25):
     return value
 
 
-def check_stayhk(df, n=100):
+def check_stayhk(df, n=10):
     """
     Check if the trajectory stay in HKTMA once it is inside.
 
@@ -87,38 +87,25 @@ def is_in_zone(lat, lon):
     return value
 
 
-def check_uniquetime(df, unixtime=False):
+def check_uniquetime(df):
     """
     Check if the trajectory has unique timestamp, return True if it does.
     """
 
-    if unixtime:
-        time_col = "time"
-    else:
-        time_col = "timestamp"
-
-    n = len(pd.unique(df[time_col]))
+    n = len(pd.unique(df["time"]))
     if n < len(df):
         return False
     else:
         return True
 
 
-def check_noskiptime(df, n=6, unixtime=False):
+def check_noskiptime(df, n=1):
     """
     Check if the trajectory contains large jump in time, i.e. time gap with no data.
     Return True if it does not.
     """
 
-    if not unixtime:
-        # Compute the time different between sucessive point from the Unix timestamp
-        f = "%Y-%m-%d %H:%M:%S"
-        times = [pd.to_datetime(x[:-6], format=f).timestamp()
-                 for x in df["timestamp"]]
-        times = np.array(times)
-    else:
-        times = df["time"]
-
+    times = df["time"]
     delta = times[1:] - times[:-1]
 
     # If there are time skip bigger than n hours
