@@ -5,10 +5,10 @@ import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 
 
-fname = "/home/kc/Research/air_traffic/data/fr24_stat/time_distance_china.txt"
-savedir = "/home/kc/Research/air_traffic/figures/2022-02-15/"
+fname = "/home/kc/Research/air_traffic/data/fr24_clean/time_distance_clean.txt"
+savedir = "/home/kc/Research/air_traffic/figures/2022-02-22/"
 
-mode = "runway"   # one of ["full", "close", "runway"]
+mode = "full"   # one of ["full", "close", "runway"]
 sname = f"endpoints_all_{mode}.png"
 # ---------------------------------------------------------------------------- #
 df = pd.read_csv(fname)

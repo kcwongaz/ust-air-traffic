@@ -9,8 +9,8 @@ scatter = False          # Draw only points without lines
 draw_box = False         # Draw the boundary box
 boundary = [111, 117.5, 19, 25.5]
 
-fdir = "/home/kc/Research/air_traffic/data/fr24_china/2017-02/2017-02-01"
-name = "EZD1264"
+fdir = "/home/kc/Research/air_traffic/data/fr24_china/2017-03/2017-03-21"
+name = "CPA28"
 savedir = "/home/kc/Research/air_traffic/figures/trajectories/fr24"
 
 save_fig = False

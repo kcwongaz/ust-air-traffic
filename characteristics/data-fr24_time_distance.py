@@ -4,10 +4,10 @@ import numpy as np
 from geopy import distance
 
 
-label = "china"
+label = "clean"
 datadir = f"/home/kc/Research/air_traffic/data/fr24_{label}/"
-savedir = "/home/kc/Research/air_traffic/data/fr24_stat"
-savename = f"{savedir}/time_distance_{label}_filtered.txt"
+savedir = "/home/kc/Research/air_traffic/data/fr24_clean"
+savename = f"{savedir}/time_distance_{label}.txt"
 
 
 # --------------------------------------------------------------------------- #
@@ -44,8 +44,21 @@ for subdir, dirs, files in os.walk(datadir):
         if len(df) == 0:
             continue
 
+        # First point in the square
         first = df.iloc[0]
-        last = df.iloc[-1]
+
+        # Find the first landing point
+        # Get through the inital take-off stage
+        n = 0
+        while df["altitude"].iloc[n] == 0:
+            n += 1
+            # Also possible that the whole flight record is already landed
+            if n == len(df):
+                n = 0
+                break
+        df = df.iloc[n:]
+        df = df.loc[df["altitude"] == 0]
+        last = df.iloc[0]
 
         # Filter those points that are not in the square
         if (np.abs(last["latitude"] - hkia[0]) > 0.25) and \

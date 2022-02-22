@@ -25,18 +25,18 @@ copyroot = "/home/kc/Research/air_traffic/data/fr24_clean/"
 # "" will only write down the filter summary without copying or listing the good trajectories
 #
 # Choose one that best fit how you want to use the data
-# Also, not copying the trajectories will obviously make thing much faster 
+# Also, not copying the trajectories will obviously make thing much faster
 mode = "copy"
 
 
 # Filter criteria to be used
 # checker_fun takes a list of checker function from opensky_checkers
 # checker_str is just a list of string labeling the checker functions
-checker_fun = [check_arrivial, check_nondeparture, check_stayhk,
-               check_uniquetime, check_notbanded]
+checker_fun = [check_nondeparture, check_stayhk,
+               check_uniquetime, check_landed, check_landedhk]
 
-checker_str = ["Non arrival",  "Departures", "Not stayed HKTMA",
-               "Duplicated time points", "Abnormal jumps"]
+checker_str = ["Departures", "Not stayed HKTMA",
+               "Duplicated time points", "Not landed", "Not landed at HK"]
 
 
 # --------------------------------------------------------------------------- #

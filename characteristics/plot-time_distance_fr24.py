@@ -17,8 +17,8 @@ plt.rcParams.update({
 color = ["#bb9af7", "#7aa2f7", "#7dcfff", "#73daca",
          "#9ece6a", "#ff9e64", "#f7768e"]
 
-fname = "/home/kc/Research/air_traffic/data/fr24_stat/time_distance_china_filtered.txt"
-sdir = "/home/kc/Research/air_traffic/figures/2022-02-15/"
+fname = "/home/kc/Research/air_traffic/data/fr24_clean/time_distance_clean.txt"
+sdir = "/home/kc/Research/air_traffic/figures/2022-02-22/"
 sname = f"fr24_distance_{mode}_filtered.png"
 
 

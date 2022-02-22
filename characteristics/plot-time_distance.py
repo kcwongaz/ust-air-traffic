@@ -3,10 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-fname = "/home/kc/Research/air_traffic/data/fr24_stat/time_distance_china_filtered.txt"
+fname = "/home/kc/Research/air_traffic/data/fr24_clean/time_distance_clean.txt"
 filters = {"lower_r": False, "upper_t": False}
 
-sdir = "/home/kc/Research/air_traffic/figures/2022-02-15"
+sdir = "/home/kc/Research/air_traffic/figures/2022-02-22"
 sname = "time_distance"
 
 # --------------------------------------------------------------------------- #
@@ -34,10 +34,10 @@ if filters["upper_t"]:
 
 fig, ax = plt.subplots()
 ax.scatter(delta_r, delta_t, s=20,
-           c="blue", marker="o", alpha=0.12)
+           c="black", marker="o", alpha=0.15)
 
-if not filters["upper_t"]:
-    ax.axhline(y=1440, color="black")
+# if not filters["upper_t"]:
+    # ax.axhline(y=1440, color="black")
 
 # ax.grid(linestyle="--")
 
@@ -45,8 +45,8 @@ ax.set_xlabel("Distance (km)", fontsize=20)
 ax.set_ylabel("Time Difference (min)", fontsize=20)
 ax.tick_params(which="both", direction="in", labelsize=14)
 
-ax.set_ylim(0, 1250)
+# ax.set_ylim(0, 1250)
 
 
 plt.tight_layout()
-plt.savefig(f"{sdir}/{sname}_test.png", dpi=300)
+plt.savefig(f"{sdir}/{sname}.png", dpi=300)

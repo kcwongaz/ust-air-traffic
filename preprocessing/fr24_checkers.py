@@ -136,3 +136,52 @@ def check_notbanded(df, tol=20, n=10):
         return False
     else:
         return True
+
+
+def check_landed(df):
+    """
+    Detect if the flight landed (altitude down to zero) eventually.
+    Return True if it did land.
+    """
+
+    if df["altitude"].iloc[-1] == 0:
+        return True
+    else:
+        return False
+
+
+def check_landedhk(df, tol_lat=0.25, tol_lon=0.25):
+    """
+    Check if the first point the flight has zero height is around HK.
+    Return True if the first landed point is around HK.
+    """
+
+    # Get through the inital take-off stage
+    n = 0
+    while df["altitude"].iloc[n] == 0:
+        n += 1
+        # Also possible that the whole flight record is already landed,
+        # then we don't cut the record
+        if n == len(df):
+            n = 0
+            break
+    df = df.iloc[n:]
+
+    df_landed = df.loc[df["altitude"] == 0]
+
+    # Flight did not land --> return immediately
+    if len(df_landed) == 0:
+        return
+
+    # Extract first landed point
+    lat = df_landed["latitude"].iloc[0]
+    lon = df_landed["longitude"].iloc[0]
+
+    # Coordinate of HKIA
+    hklat = 22.308046
+    hklon = 113.918480
+
+    value = np.abs(lat - hklat) < tol_lat \
+        and np.abs(lon - hklon) < tol_lon
+
+    return value
