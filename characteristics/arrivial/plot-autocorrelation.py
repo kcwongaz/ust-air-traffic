@@ -26,7 +26,7 @@ df = df.loc[df["year"] == year]
 # df = df[df["month"].isin([7])]
 
 arr_times = df["t_f"].to_numpy()
-lambda_t, _ = arrivial_rate(arr_times, dt, 0)
+lambda_t, _ = arrivial_rate(arr_times, dt, start_hour=16, start_by="cut")
 a_matrix = autocorr(lambda_t, dt, 86400)
 
 
@@ -41,11 +41,11 @@ im = ax.imshow(a_matrix, cmap="plasma", extent=(0, 24, 0, 24), origin="lower",
                vmin=0, vmax=1)
 
 ax.set_ylabel("Time $t$ (Hours from 00:00)", fontsize=12)
-ax.set_xlabel("Time Difference $T$ (Hour)", fontsize=12)
+ax.set_xlabel("Forward Time Difference $T$ (Hour)", fontsize=12)
 
 ax.set_xticks(range(0, 25, 2))
 ax.set_yticks(range(0, 25, 2))
-ax.set_title(f"Arrivial Rate Autocorrection ({year})", fontsize=14)
+ax.set_title(f"Arrivial Rate Autocorrelation ({year})", fontsize=14)
 
 cax = plt.axes([0.91, 0.15, 0.02, 0.7])
 plt.colorbar(im, cax)
