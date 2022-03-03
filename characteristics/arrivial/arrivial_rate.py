@@ -60,7 +60,7 @@ df = pd.read_csv(fname, header=0)
 df["year"] = pd.to_datetime(df["t_f"], unit="s").dt.year
 df["month"] = pd.to_datetime(df["t_f"], unit="s").dt.month
 df = df.loc[df["year"] == year]
-# df = df[df["month"].isin(range(1, 6))]
+# df = df[df["month"].isin([7])]
 
 
 arrivial_time = df["t_f"].to_numpy()
@@ -144,8 +144,8 @@ t_axis = np.arange(0, 24, window/3600)
 im = ax.imshow(corr, cmap="plasma", extent=(0, 24, 0, 24), origin="lower",
                vmin=0, vmax=1)
 
-ax.set_xlabel("Time $t$ (Hours from 00:00)", fontsize=12)
-ax.set_ylabel("Forward Time $T$ (Hour)", fontsize=12)
+ax.set_ylabel("Time $t$ (Hours from 00:00)", fontsize=12)
+ax.set_xlabel("Time Difference $T$ (Hour)", fontsize=12)
 
 ax.set_xticks(range(0, 25, 2))
 ax.set_yticks(range(0, 25, 2))
