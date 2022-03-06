@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from arrivial_rate import arrivial_rate, autocorr
+from arrivial_rate import arrivial_rate, autocorr, autocovar
 
 
 plt.rcParams.update({
@@ -23,7 +23,7 @@ df = pd.read_csv(fname, header=0)
 df["year"] = pd.to_datetime(df["t_f"], unit="s").dt.year
 df["month"] = pd.to_datetime(df["t_f"], unit="s").dt.month
 df = df.loc[df["year"] == year]
-df = df[df["month"].isin([5])]
+# df = df[df["month"].isin([2, 3])]
 
 arr_times = df["t_f"].to_numpy()
 lambda_t, _ = arrivial_rate(arr_times, dt, start_hour=16, start_by="cut")
