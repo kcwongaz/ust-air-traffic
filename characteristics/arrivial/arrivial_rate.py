@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 
 def arrivial_rate(arr_times, dt, start_hour=-1, start_by="pad"):
@@ -64,7 +63,31 @@ def fold_timeseries(timeseries, dt, foldsize):
     return folded
 
 
-def autocorr(timeseries, dt, period):
+def autocorr(timeseries, dt, lag_max):
+    """
+    Compute the autocorrelation coefficient for a stationary time series.
+    Up to lag_max of time lag.
+    """
+
+    if lag_max > (dt * len(timeseries)):
+        lag_max = (dt * len(timeseries))
+
+    n_max = lag_max // dt
+    a = np.zeros(n_max + 1)
+    mean = np.mean(timeseries)
+    var = np.var(timeseries)
+
+    for n in range(n_max + 1):
+        sample = [timeseries[i]*timeseries[i+n]
+                  for i in range(len(timeseries) - n)]
+
+        a[n] = np.mean(sample) - mean*mean
+        a[n] /= var
+
+    return a
+
+
+def autocorr_period(timeseries, dt, period):
     """
     Compute the autocorrelation coefficient for a periodic time series
     """
@@ -88,5 +111,37 @@ def autocorr(timeseries, dt, period):
             j_mod = (i+j) % n
             a_matrix[i, j] = np.mean(sample) - mean[i]*mean[j_mod]
             a_matrix[i, j] /= np.sqrt(var[i] * var[j_mod])
+
+    return a_matrix
+
+
+def autocovar_period(timeseries, dt, period, cumulant=True):
+    """
+    Compute the autocorrelation function for a periodic time series.
+    This is also called the autocovariance.
+
+    When cumulant is True, compute <X(t)X(t+T)> - <X(t)><X(t+T)>,
+         cumulant is False, compute <X(t)X(t+T)>
+    """
+
+    n = round(period / dt)
+    n_period = int(len(timeseries) / n)
+    a_matrix = np.zeros((n, n))
+
+    if cumulant:
+        mean = np.zeros(n)
+        for i in range(n):
+            sample = [timeseries[m*n + i] for m in range(n_period-1)]
+            mean[i] = np.mean(sample)
+
+    for i in range(n):
+        for j in range(n):
+            sample = [timeseries[m*n + i] * timeseries[m*n + i + j]
+                      for m in range(n_period-1)]
+
+            a_matrix[i, j] = np.mean(sample)
+
+            if cumulant:
+                a_matrix[i, j] -= mean[i]*mean[(i+j) % n]
 
     return a_matrix

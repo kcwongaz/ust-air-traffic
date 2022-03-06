@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from arrivial_rate import arrivial_rate, autocorr
+from arrivial_rate import arrivial_rate
 
 
 fname = "/home/kc/Research/air_traffic/data/fr24_clean/time_distance.txt"

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from arrivial_rate import arrivial_rate, autocorr, autocovar
+from arrivial_rate import arrivial_rate, autocorr_period, autocovar_period
 
 
 plt.rcParams.update({
@@ -27,7 +27,7 @@ df = df.loc[df["year"] == year]
 
 arr_times = df["t_f"].to_numpy()
 lambda_t, _ = arrivial_rate(arr_times, dt, start_hour=16, start_by="cut")
-a_matrix = autocorr(lambda_t, dt, 86400)
+a_matrix = autocorr_period(lambda_t, dt, 86400)
 
 
 # --------------------------------------------------------------------------- #
