@@ -15,7 +15,7 @@ fname = "/home/kc/Research/air_traffic/data/fr24_clean/time_distance.txt"
 sdir = "/home/kc/Research/air_traffic/figures/2022-03-01"
 
 year = 2017
-dt = 60 * 15
+dt = 60 * 10
 period = 86400
 
 cmap_n = 20
@@ -41,18 +41,18 @@ lambda_t, _ = arrivial_rate(arr_times, dt, start_hour=16, start_by="cut")
 fig, ax = plt.subplots()
 cmap = plt.get_cmap("Spectral", cmap_n)
 
-# residue = lambda_t
-residue = seasonal_difference(lambda_t, dt, period // 2)
-residue = seasonal_difference(residue, dt, period)
-# residue = remove_seasonal_mean(lambda_t, dt, period)
+residue = lambda_t
+residue = seasonal_difference(lambda_t, dt, period)
+# residue = seasonal_difference(residue, dt, 3600 * 8)
+# residue1 = remove_seasonal_mean(residue, dt, period)
 
 
-acf = autocorr(residue, dt, period * 5)
+acf = autocorr(residue, dt, 10*dt)
 t_axis = np.arange(len(acf)) * dt / 3600
+ax.plot(t_axis, acf, marker=".")
 
-
-ax.plot(t_axis, acf)
-
+# acf1 = autocorr(residue1, dt, period * 5)
+# ax.plot(t_axis, acf1)
 
 # --------------------------------------------------------------------------- #
 plt.show()

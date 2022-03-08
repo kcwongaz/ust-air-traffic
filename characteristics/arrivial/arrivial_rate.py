@@ -63,6 +63,31 @@ def fold_timeseries(timeseries, dt, foldsize):
     return folded
 
 
+def nullify_day(timeseries, dt):
+    """
+    Replace value by nan if the whole day contains no data
+    """
+
+    # Number of point per day
+    n = 86400 // dt
+
+    # Change data type to float to allow nan
+    timeseries = timeseries.astype(np.float64)
+
+    # Fold data into daily winodw
+    folded = fold_timeseries(timeseries, dt, foldsize=86400)
+    for i, window in enumerate(folded):
+
+        # If there is not a single flight in a day,
+        # replace all zeros to nan
+        if np.sum(window) == 0:
+            print("Found empty day!")
+            for j in range(-n, 2*n):
+                timeseries[i*n + j] = np.nan
+
+    return timeseries
+
+
 def autocorr(timeseries, dt, lag_max):
     """
     Compute the autocorrelation coefficient for a stationary time series.
@@ -74,14 +99,14 @@ def autocorr(timeseries, dt, lag_max):
 
     n_max = lag_max // dt
     a = np.zeros(n_max + 1)
-    mean = np.mean(timeseries)
-    var = np.var(timeseries)
+    mean = np.nanmean(timeseries)
+    var = np.nanvar(timeseries)
 
     for n in range(n_max + 1):
         sample = [timeseries[i]*timeseries[i+n]
                   for i in range(len(timeseries) - n)]
 
-        a[n] = np.mean(sample) - mean*mean
+        a[n] = np.nanmean(sample) - mean*mean
         a[n] /= var
 
     return a
@@ -100,8 +125,8 @@ def autocorr_period(timeseries, dt, period):
     var = np.zeros(n)
     for i in range(n):
         sample = [timeseries[m*n + i] for m in range(n_period-1)]
-        mean[i] = np.mean(sample)
-        var[i] = np.var(sample) * len(sample) / (len(sample) - 1)
+        mean[i] = np.nanmean(sample)
+        var[i] = np.nanvar(sample)
 
     for i in range(n):
         for j in range(n):
@@ -109,7 +134,7 @@ def autocorr_period(timeseries, dt, period):
                       for m in range(n_period-1)]
 
             j_mod = (i+j) % n
-            a_matrix[i, j] = np.mean(sample) - mean[i]*mean[j_mod]
+            a_matrix[i, j] = np.nanmean(sample) - mean[i]*mean[j_mod]
             a_matrix[i, j] /= np.sqrt(var[i] * var[j_mod])
 
     return a_matrix
@@ -132,14 +157,14 @@ def autocovar_period(timeseries, dt, period, cumulant=True):
         mean = np.zeros(n)
         for i in range(n):
             sample = [timeseries[m*n + i] for m in range(n_period-1)]
-            mean[i] = np.mean(sample)
+            mean[i] = np.nanmean(sample)
 
     for i in range(n):
         for j in range(n):
             sample = [timeseries[m*n + i] * timeseries[m*n + i + j]
                       for m in range(n_period-1)]
 
-            a_matrix[i, j] = np.mean(sample)
+            a_matrix[i, j] = np.nanmean(sample)
 
             if cumulant:
                 a_matrix[i, j] -= mean[i]*mean[(i+j) % n]

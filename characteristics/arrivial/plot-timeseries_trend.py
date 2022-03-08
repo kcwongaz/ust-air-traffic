@@ -16,7 +16,7 @@ plt.rcParams.update({
     "font.sans-serif": ["Helvetica"]}
 )
 
-year = 2020
+year = 2018
 dt = 60 * 15
 period = 86400
 
@@ -32,7 +32,7 @@ df = pd.read_csv(fname, header=0)
 df["year"] = pd.to_datetime(df["t_f"], unit="s").dt.year
 df["month"] = pd.to_datetime(df["t_f"], unit="s").dt.month
 df = df.loc[df["year"] == year]
-# df = df[df["month"].isin([2])]
+# df = df[df["month"].isin([5])]
 
 arr_times = df["t_f"].to_numpy()
 lambda_t, _ = arrivial_rate(arr_times, dt, start_hour=16, start_by="cut")
@@ -50,7 +50,6 @@ residue = remove_seasonal_mean(lambda_t, dt, period)
 
 
 t_axis = np.arange(dt, period + dt, dt) / 3600
-print(len(fold_timeseries(residue, dt, period)))
 
 for i, ts in enumerate(fold_timeseries(residue, dt, period)):
     if plot_n != -1 and i > plot_n:
