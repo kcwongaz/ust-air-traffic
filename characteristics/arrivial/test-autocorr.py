@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from arrivial_rate import autocorr_period, autocorr
+from detrend import seasonal_difference
 
 
 def test_autocorr_period():
@@ -11,7 +12,7 @@ def test_autocorr_period():
     period = 100
     t = np.arange(0, 100000+dt, dt)
     s = np.sin(2*np.pi / period * t)
-    a = autocorr_period(s, dt, period=period)
+    a = autocorr_period(s, dt, period=1)
 
     # Autocorrelation computed analytically
     t1 = np.arange(0, period+dt, dt)
@@ -32,18 +33,18 @@ def test_autocorr_period():
     fig, axs = plt.subplots(ncols=2, figsize=(8, 8))
 
     ax1 = axs[0]
-    ax1.imshow(a, cmap="plasma", extent=(0, period, 0, period), origin="lower",
-               vmin=-1, vmax=1)
+    ax1.imshow(a, cmap="plasma", extent=(0, period, 0, period),
+               origin="lower", vmin=-1, vmax=1)
 
     ax2 = axs[1]
-    ax2.imshow(a1, cmap="plasma", extent=(0, period, 0, period), origin="lower",
-               vmin=-1, vmax=1)
+    ax2.imshow(a1, cmap="plasma", extent=(0, period, 0, period),
+               origin="lower", vmin=-1, vmax=1)
 
     plt.tight_layout()
     plt.show()
 
 
-def test_autocorr():
+def test1_autocorr():
 
     # Autocorrelation computed of X(t) = sin(wt) by autocorr()
     dt = 1
@@ -69,4 +70,30 @@ def test_autocorr():
     plt.show()
 
 
-test_autocorr()
+def test2_autocorr():
+
+    # Autocorrelation by autocorr()
+    dt = 1
+    period = 100
+    t = np.arange(0, 100*period+dt, dt)
+
+    noise = np.random.normal(size=len(t), scale=1)
+    s = np.sin(2*np.pi / period * t) + noise
+
+    a = autocorr(s, dt, lag_max=5*period)
+    a1 = autocorr(seasonal_difference(s, dt, period), dt, lag_max=5*period)
+    a2 = autocorr(noise, dt, lag_max=5*period)
+    tau = dt*np.arange(len(a))
+
+    fig, ax = plt.subplots()
+    ax.plot(tau, a, color="red")
+    ax.plot(tau, a1, color="blue")
+    ax.plot(tau, a2, color="green")
+
+    plt.tight_layout()
+    plt.show()
+
+
+test_autocorr_period()
+# test1_autocorr()
+# test2_autocorr()
