@@ -170,3 +170,41 @@ def autocovar_period(timeseries, dt, period, cumulant=True):
                 a_matrix[i, j] -= mean[i]*mean[(i+j) % n]
 
     return a_matrix
+
+
+def autocorr_period_ext(timeseries, dt, period, n_period):
+    """
+    Compute the autocorrelation coefficient for a periodic time series;
+    extended for n_period of periods
+    """
+
+    # If doing for just one period
+    if n_period == 1:
+        return autocorr_period(timeseries, dt, period)
+
+    # Number of time steps in a period and in n periods
+    ts_1 = period // dt
+    ts_n = (period * n_period) // dt
+
+    # Number of periods that can fit in the time series data
+    num_period = len(timeseries) // ts_1
+
+    a_matrix = np.zeros((ts_1, ts_n))
+
+    mean = np.zeros(ts_1)
+    var = np.zeros(ts_1)
+    for i in range(ts_1):
+        sample = [timeseries[m*ts_1 + i] for m in range(num_period-1)]
+        mean[i] = np.nanmean(sample)
+        var[i] = np.nanvar(sample)
+
+    for i in range(ts_1):
+        for j in range(ts_n):
+            sample = [timeseries[m*ts_1 + i] * timeseries[m*ts_1 + i + j]
+                      for m in range(num_period-n_period)]
+
+            j_mod = (i+j) % ts_1
+            a_matrix[i, j] = np.nanmean(sample) - mean[i]*mean[j_mod]
+            a_matrix[i, j] /= np.sqrt(var[i] * var[j_mod])
+
+    return a_matrix

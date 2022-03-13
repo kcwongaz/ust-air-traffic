@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from arrivial_rate import arrivial_rate, autocorr_period
+from arrivial_rate import arrivial_rate, autocorr_period, nullify_day
 
 
 plt.rcParams.update({
@@ -23,10 +23,11 @@ df = pd.read_csv(fname, header=0)
 df["year"] = pd.to_datetime(df["t_f"], unit="s").dt.year
 df["month"] = pd.to_datetime(df["t_f"], unit="s").dt.month
 df = df.loc[df["year"] == year]
-df = df[df["month"].isin([5])]
+df = df[df["month"].isin([1, 2, 3])]
 
 arr_times = df["t_f"].to_numpy()
 lambda_t, _ = arrivial_rate(arr_times, dt, start_hour=16, start_by="cut")
+lambda_t = nullify_day(lambda_t, dt)
 a_matrix = autocorr_period(lambda_t, dt, 86400)
 
 
@@ -34,17 +35,17 @@ a_matrix = autocorr_period(lambda_t, dt, 86400)
 # Draw
 
 fig, ax = plt.subplots()
-t_axis = np.arange(dt/3600, 24, dt/3600)  # Time axis in hour
+t_max = len(a_matrix[0]) * dt / 3600
 
 
-im = ax.imshow(a_matrix, cmap="plasma", extent=(0, 24, 0, 24), origin="lower",
-               vmin=0, vmax=1)
+im = ax.imshow(a_matrix, cmap="plasma", extent=(0, t_max, 0, t_max),
+               origin="lower", vmin=0, vmax=1)
 
 ax.set_ylabel("Time $t$ (Hours from 00:00)", fontsize=12)
 ax.set_xlabel("Forward Time Difference $T$ (Hour)", fontsize=12)
 
-ax.set_xticks(range(0, 25, 2))
-ax.set_yticks(range(0, 25, 2))
+# ax.set_xticks(range(0, 25, 2))
+# ax.set_yticks(range(0, 25, 2))
 ax.set_title(f"Arrivial Rate Autocorrelation ({year})", fontsize=14)
 
 cax = plt.axes([0.91, 0.15, 0.02, 0.7])
