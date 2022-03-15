@@ -1,16 +1,15 @@
-import numpy as np
 import pandas as pd
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 
 
-fname = "/home/kc/Research/air_traffic/data/fr24_clean/time_distance_clean.txt"
+fname = "/home/kc/Research/air_traffic/data/fr24_clean/stat_145-165.txt"
 savedir = "/home/kc/Research/air_traffic/figures/2022-02-22/"
 
 mode = "full"   # one of ["full", "close", "runway"]
 sname = f"entrypoints_{mode}.png"
-# ---------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
 df = pd.read_csv(fname)
 lat, lon = df["lat_i"].to_numpy(), df["lon_i"].to_numpy()
 
@@ -27,7 +26,7 @@ if mode == "full":
 elif mode == "close":
     ax.set_extent([113, 115, 21, 23], ccrs.PlateCarree())
 elif mode == "runway":
-    ax.set_extent([113.918480-0.25, 113.918480+0.25, 
+    ax.set_extent([113.918480-0.25, 113.918480+0.25,
                    22.308046-0.25, 22.308046+0.25], ccrs.PlateCarree())
 else: 
     ax.set_extent([111, 117.5, 19, 25.5], ccrs.PlateCarree())
@@ -60,4 +59,5 @@ gridlines.top_labels = False
 gridlines.right_labels = False
 
 plt.tight_layout()
-plt.savefig(f"{savedir}/{sname}", dpi=300)
+# plt.savefig(f"{savedir}/{sname}", dpi=300)
+plt.show()
