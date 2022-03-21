@@ -6,9 +6,9 @@ from scipy.stats import binned_statistic
 
 
 fname = "/home/kc/Research/air_traffic/data/fr24_clean/stat_145-165_clustered.txt"
-savedir = "/home/kc/Research/air_traffic/figures/2022-03-15"
+savedir = "/home/kc/Research/air_traffic/figures/2022-03-22"
 
-year = 2021
+year = 2020
 n_cluster = 5
 
 bins = np.arange(0, 25, 1)
@@ -18,9 +18,9 @@ dow_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 dow_colors = ["blue", "darkviolet", "green", "darkorange", "teal",
               "deeppink", "red"]
 
-statistic = "mean"
+statistic = "count"
 savefig = True
-showfig = False
+showfig = True
 
 # --------------------------------------------------------------------------- #
 df = pd.read_csv(fname)
@@ -74,6 +74,8 @@ for ij in range(6):
         ax.plot(centers, mean, marker="o", markersize=1.5, lw=0.75,
                 color=dow_colors[k], alpha=0.8)
 
+    ax.set_xticks(np.arange(0, 25, 2))
+
     # Curve labels and y-axis label
     if ij == 0:
         for k in range(7):
@@ -82,7 +84,10 @@ for ij in range(6):
 
         ax.legend(fontsize=8)
 
-        ax.set_ylabel("Hourly average transit time (min)", fontsize=12)
+        if statistic == "count":
+            ax.set_ylabel("Hourly total entry count", fontsize=12)
+        else:
+            ax.set_ylabel("Hourly average transit time (min)", fontsize=12)
 
     # x-axis label
     if ij == 4:
