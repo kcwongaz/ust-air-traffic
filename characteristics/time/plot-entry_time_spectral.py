@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy as sp
 
 from scipy.stats import binned_statistic
 from moving_avg import moving_avg
@@ -17,7 +16,7 @@ window = 0.25
 bins = np.arange(0, 24.1, window)
 
 statistic = "mean"
-savefig = True
+savefig = False
 showfig = True
 
 
@@ -77,8 +76,8 @@ period = 1 / freq
 # --------------------------------------------------------------------------- #
 fig, ax = plt.subplots()
 
-# ax.plot(period[40:], spectrum[40:], color="blue", lw=1)
-ax.plot(freq, spectrum, color="blue", lw=1)
+ax.plot(period[40:], spectrum[40:], color="blue", lw=1)
+# ax.plot(freq, spectrum, color="blue", lw=1)
 
 
 # ax.plot(t_axis[:500], delta_avg1[:500], marker="o", color="red")

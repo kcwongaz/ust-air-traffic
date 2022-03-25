@@ -8,17 +8,17 @@ from scipy.stats import binned_statistic
 fname = "/home/kc/Research/air_traffic/data/fr24_clean/stat_145-165_clustered.txt"
 savedir = "/home/kc/Research/air_traffic/figures/2022-03-22"
 
-year = 2020
+year = 2018
 n_cluster = 5
 
-bins = np.arange(0, 25, 1)
+bins = np.arange(0, 25, 0.25)
 
 c_names = ["Southeast", "North", "Southwest", "East", "Northwest"]
 dow_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 dow_colors = ["blue", "darkviolet", "green", "darkorange", "teal",
               "deeppink", "red"]
 
-statistic = "count"
+statistic = "mean"
 savefig = True
 showfig = True
 
@@ -87,7 +87,7 @@ for ij in range(6):
         if statistic == "count":
             ax.set_ylabel("Hourly total entry count", fontsize=12)
         else:
-            ax.set_ylabel("Hourly average transit time (min)", fontsize=12)
+            ax.set_ylabel("15-min-averaged transit time (min)", fontsize=12)
 
     # x-axis label
     if ij == 4:
