@@ -20,9 +20,9 @@ def test_find_minima_spacetime():
 
 def test_find_exitpoint():
 
-    t1 = np.arange(0, 10, 0.1)
-    t2 = np.arange(10, 20, 0.1)
-    t3 = np.arange(20, 30, 0.1)
+    t1 = np.arange(0, 10, 0.01)
+    t2 = np.arange(10, 20, 0.01)
+    t3 = np.arange(20, 30, 0.01)
 
     loop_loc = (-5, 5)
 
@@ -44,5 +44,5 @@ def test_find_exitpoint():
 
 
 
-# test_find_minima_spacetime()
-test_find_exitpoint()
+test_find_minima_spacetime()
+# test_find_exitpoint()
