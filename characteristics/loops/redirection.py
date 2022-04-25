@@ -3,24 +3,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-from loop_helpers import sort_flight_exittime, redirect_flight
+from loop_helpers import *
 
 
 # --------------------------------------------------------------------------- #
 # Target datetime range to plot flight on; UTC 16:00 is HKT 00:00
-target_start = pd.to_datetime("2017-01-22 15:00", format=r"%Y-%m-%d %H:%M")
-target_end = pd.to_datetime("2017-01-22 16:00", format=r"%Y-%m-%d %H:%M")
+target_start = pd.to_datetime("2017-01-01 00:00", format=r"%Y-%m-%d %H:%M")
+target_end = pd.to_datetime("2017-12-31 23:59", format=r"%Y-%m-%d %H:%M")
 target_start_str = target_start.strftime(r"%Y%m%d_%H%M")
 target_end_str = target_end.strftime(r"%Y%m%d_%H%M")
+dstr = f"{target_start_str}-{target_end_str}"
 
-datadir = f"/home/kc/Research/air_traffic/data/fr24_clean/spacetime/{target_start_str}-{target_end_str}"
-savedir = f"/home/kc/Research/air_traffic/figures/2022-04-19"
-case = "1"
+datadir = f"/home/kc/Research/air_traffic/data/fr24_clean/spacetime/{dstr}"
+savedir = f"/home/kc/Research/air_traffic/data/redirection"
+case = "all"
 
 # --------------------------------------------------------------------------- #
 # Loop cases
 if case == "1":
     min_loc = (70, 80)
+if case == "2":
+    min_loc = (90, 130)
 
 
 # --------------------------------------------------------------------------- #
@@ -37,31 +40,33 @@ for subdir, dirs, files in os.walk(datadir):
         data_arr = np.loadtxt(fname)
         data_arr = data_arr[data_arr[:, 1] <= 200]
 
-        if data_arr[0, 3] > 115:
-            continue
+        # if data_arr[0, 3] > 115:
+        #     continue
 
         data[key] = data_arr
 
 # --------------------------------------------------------------------------- #
 
-flight_min, flight_exit, flight_dist = sort_flight_exittime(data,
-                                               min_loc=min_loc)
+min_loc = label_flight_loops(data)
+flight_min, flight_exit, flight_dist = sort_flight_minima(data, min_loc)
 
-
-for i in range(len(flight_min)):
-    print(redirect_flight(flight_min, flight_exit, i, tol=30) / 60)
-
-
-
-# --------------------------------------------------------------------------- #
-# For test
-fig, ax = plt.subplots()
-
-for key, flight in data.items():
-    ax.plot(flight[:, 0], flight[:, 1])
-
+chain = []
+time_saved = []
+time_single = []
 
 for i in range(len(flight_min)):
-    ax.vlines(x=flight_exit[i], ymin=0, ymax=200, color="black")
+    time_saved_i = redirect_flight(flight_min, flight_exit, i, tol=30) / 60
 
-plt.show()
+    chain.append(len(time_saved_i) - 1)
+    time_saved.append(np.sum(time_saved_i))
+    time_single.append(time_saved_i[0])
+
+# print(chain)
+# print(time_saved)
+
+count_sel_prob = detect_selection_problem(flight_min, flight_exit, tol=30)
+print(count_sel_prob)
+
+np.savetxt(f"{savedir}/chain_{case}_{dstr}.txt", chain)
+np.savetxt(f"{savedir}/ts_{case}_{dstr}.txt", time_saved)
+np.savetxt(f"{savedir}/ts1_{case}_{dstr}.txt", time_single)

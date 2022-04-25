@@ -250,5 +250,24 @@ def redirect_flight(flight_min, flight_exit, target, tol=60):
     return s
 
 
-def detect_selection_problem():
-    pass
+def detect_selection_problem(flight_min, flight_exit, tol=60):
+    count = 0
+
+    for target in range(len(flight_min)):
+        exit_this = flight_exit[target]
+        t_saved = np.zeros(len(flight_min))
+
+        for i in range(target + 1, len(flight_min)):
+            matched = flight_min[i][np.abs(flight_min[i] - exit_this) < tol]
+
+            if len(matched) > 0:
+                t_saved[i] = flight_exit[i] - matched[0]
+            if len(matched) > 1:
+                print("Warning: More than one match found!")
+
+        # Compute how many candidate promotion is there
+        num_selection = len(np.nonzero(t_saved)[0])
+        if num_selection > 1:
+            count += 1
+
+    return count
