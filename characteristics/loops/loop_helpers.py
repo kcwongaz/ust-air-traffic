@@ -44,7 +44,7 @@ def find_minima(dist, min_loc):
 
     # To determine a turning point, we need at least 2 segments, 3 points.
     if len(dist) < 3:
-        return None
+        return []
 
     diff = dist[1:] - dist[:-1]
     prod = diff[1:] * diff[:-1]
@@ -90,18 +90,13 @@ def find_exitpoint(dist, time, min_loc):
     the aircraft return to the same distance as the last minimum.
     """
 
-    # Keep only points in the loop region
-    # ind = np.where((dist >= loop_loc[0]) & (dist <= loop_loc[1]))
-    # dist = dist[ind]
-    # time = time[ind]
-
     minima = find_minima(dist, min_loc)
 
     # Exit point is undefined when there is no loop
     if len(minima) == 0:
         return None, None
 
-    # Skip one more point to avoid having constant points
+    # Skip one more point to avoid having constant segments
     dist_after = dist[minima[-1] + 2:]
     time_after = time[minima[-1] + 2:]
     exitpoint = np.argmin(np.abs(dist_after - dist[minima[-1]]))
@@ -112,20 +107,71 @@ def find_exitpoint(dist, time, min_loc):
     return exit_dist, exit_time
 
 
-def sort_flight_exittime(flight_dict, min_loc):
+def label_flight_loops(flight_dict):
+    """
+    Generate a dict labeling where the loops locate in each flight.
+    This is done by finding which candidate regions out of 'locations' has
+    the most numbr of loops.
 
-    flight_min = []
+    If there are no loop, it will just label the flight to have the first
+    loop region. This should not cause a problem, because upon find_minima()
+    in the area, the loop search will return [].
+
+    It is acutally not necessary to complete distinguish the three loops area,
+    just locating whether the loops are in the upper of lower region in the
+    spacetime graph is sufficent for my purpose. The tricker part is flight
+    from North always produces a 'fake' loop.
+    """
+
+    min_loc = {}
+    # locations = [(70, 80), (90, 102), (103, 125)]
+
+    # It is acutally not necessary to complete distinguish the three loops area
+    locations = [(70, 80), (90, 130)]
+
+    for key in flight_dict:
+        dist = flight_dict[key][:, 1]
+        # dist = dist[(dist <= 200) & (dist >= 30)]
+
+        loop_num = [len(find_minima(dist, loc)) for loc in locations]
+        min_loc[key] = locations[np.argmax(loop_num)]
+
+    return min_loc
+
+
+def label_flight_dir(flight_dict):
+    """
+    Generate a dict labeling where the loops locate in each flight.
+    This is done looking at which direction does the flight come in.
+    """
+
+    min_loc = {}
+    for key in flight_dict:
+        dist = flight_dict[key][:, 1]
+        ind = np.where(dist <= 200)  # look only at the later part of the flight
+
+        lat = flight_dict[key][ind, 2]
+        lon = flight_dict[key][ind, 3]
+
+    return min_loc
+
+
+def sort_flight_keys(flight_dict, min_loc):
+
     flight_exit = []
     keys = []
-
-    # For test
-    flight_dist = []
 
     for key in flight_dict:
         time = flight_dict[key][:, 0]
         dist = flight_dict[key][:, 1]
 
-        _, exit_time = find_exitpoint(dist, time, min_loc)
+        if type(min_loc) is dict:
+            min_loc_this = min_loc[key]
+            _, exit_time = find_exitpoint(dist, time, min_loc_this)
+        else:
+            min_loc_this = min_loc
+
+        _, exit_time = find_exitpoint(dist, time, min_loc_this)
 
         # Only flights with loops in target region are kept
         if exit_time is not None:
@@ -133,15 +179,32 @@ def sort_flight_exittime(flight_dict, min_loc):
             keys.append(key)
 
     ind_sort = np.argsort(flight_exit)
+
     flight_exit = np.array(flight_exit)
     flight_exit = flight_exit[ind_sort]
+    keys = np.array(keys)
+    keys = keys[ind_sort]
 
-    for i in ind_sort:
-        key = keys[i]
-        time = flight_dict[key][:, 0]
-        dist = flight_dict[key][:, 1]
+    return keys, flight_exit
 
-        min_dist, min_time = find_minima_spacetime(dist, time, min_loc)
+
+def sort_flight_minima(flight_dict, min_loc):
+
+    flight_min = []
+    flight_dist = []
+
+    keys, flight_exit = sort_flight_keys(flight_dict, min_loc)
+
+    for k in keys:
+        time = flight_dict[k][:, 0]
+        dist = flight_dict[k][:, 1]
+
+        if type(min_loc) is dict:
+            min_loc_this = min_loc[k]
+        else:
+            min_loc_this = min_loc
+
+        min_dist, min_time = find_minima_spacetime(dist, time, min_loc_this)
 
         flight_min.append(min_time)
         flight_dist.append(min_dist)
@@ -150,6 +213,11 @@ def sort_flight_exittime(flight_dict, min_loc):
 
 
 def redirect_flight(flight_min, flight_exit, target, tol=60):
+    """
+    Intake a sorted list of flight loop minima and the corresponding exit points,
+    then compute the time saved after the target flight (indexed by exit order)
+    got redirected.
+    """
 
     s = []
     while target is not None:
@@ -171,8 +239,16 @@ def redirect_flight(flight_min, flight_exit, target, tol=60):
             target = None
             s.append(0)
         else:
+            # Greedy search
             target = np.argmax(t_saved)
+
+            # Priority preserving search
+            # target = np.nonzero(t_saved)[0][0]
             s.append(t_saved[target])
 
     s = np.array(s)
     return s
+
+
+def detect_selection_problem():
+    pass
