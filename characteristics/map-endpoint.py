@@ -5,19 +5,21 @@ import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 
 
-fname = "/home/kc/Research/air_traffic/data/fr24_clean/time_distance_clean.txt"
-savedir = "/home/kc/Research/air_traffic/figures/2022-02-22/"
+fname = "/home/kc/Research/air_traffic/data/fr24_stat/time_distance_china.txt"
+savedir = "/home/kc/Research/air_traffic/figures/thesis/"
 
 mode = "full"   # one of ["full", "close", "runway"]
-sname = f"endpoints_all_{mode}.png"
+sname = f"endpoints_all_{mode}.pdf"
 # ---------------------------------------------------------------------------- #
 df = pd.read_csv(fname)
 lat, lon = df["lat_f"].to_numpy(), df["lon_f"].to_numpy()
 
 
 plt.rcParams.update({
+    "text.usetex": True,
     "font.family": "serif",
-    "font.sans-serif": ["Helvetica"]}
+    "font.serif": ["Palatino"]
+    }
 )
 
 ax = plt.axes(projection=ccrs.PlateCarree())

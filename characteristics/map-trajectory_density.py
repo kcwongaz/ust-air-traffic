@@ -7,21 +7,23 @@ import os
 
 dt = pd.Timedelta(1, "D")
 start_date = pd.to_datetime("2017-01-01", format=r"%Y-%m-%d")
-end_date = pd.to_datetime("2017-03-31", format=r"%Y-%m-%d")
+end_date = pd.to_datetime("2017-01-11", format=r"%Y-%m-%d")
 
-save_suffix = "_20170103"
+save_suffix = "_10days"
 filtering = True       # Filter points not within the box
 scatter = False         # Draw only points without lines
 draw_box = False         # Draw the boundary box
 boundary = [111, 117.5, 19, 25.5]
 
-datadir = f"/home/kc/Research/air_traffic/data/fr24_china"
-savedir = "/home/kc/Research/air_traffic/figures/2022-03-15"
+datadir = f"/home/kc/Research/air_traffic/data/fr24_clean"
+savedir = "/home/kc/Research/air_traffic/figures/thesis"
 
 # ---------------------------------------------------------------------------- #
 plt.rcParams.update({
+    "text.usetex": True,
     "font.family": "serif",
-    "font.sans-serif": ["Helvetica"]}
+    "font.serif": ["Palatino"]
+    }
 )
 
 ax = plt.axes(projection=ccrs.PlateCarree())
@@ -54,7 +56,7 @@ while date <= end_date:
             lon = df["longitude"].to_numpy()
 
             ax.plot(lon, lat, transform=ccrs.Geodetic(),
-                    linewidth=0.1, alpha=0.1, color="blue")
+                    linewidth=0.1, alpha=0.015, color="blue")
     date += dt
 
 # Draw gridlines
@@ -64,5 +66,5 @@ gridlines = ax.gridlines(draw_labels=True, zorder=0,
 gridlines.top_labels = False
 gridlines.right_labels = False
 plt.tight_layout()
-plt.savefig(f"{savedir}/trajectory_density{save_suffix}.png", dpi=300)
+plt.savefig(f"{savedir}/trajectory_density{save_suffix}.pdf", dpi=300)
 plt.show()

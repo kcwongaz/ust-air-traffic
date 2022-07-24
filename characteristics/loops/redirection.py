@@ -9,7 +9,7 @@ from loop_helpers import *
 # --------------------------------------------------------------------------- #
 # Target datetime range to plot flight on; UTC 16:00 is HKT 00:00
 target_start = pd.to_datetime("2017-01-01 00:00", format=r"%Y-%m-%d %H:%M")
-target_end = pd.to_datetime("2017-12-31 23:59", format=r"%Y-%m-%d %H:%M")
+target_end = pd.to_datetime("2018-12-31 23:59", format=r"%Y-%m-%d %H:%M")
 target_start_str = target_start.strftime(r"%Y%m%d_%H%M")
 target_end_str = target_end.strftime(r"%Y%m%d_%H%M")
 dstr = f"{target_start_str}-{target_end_str}"
@@ -53,6 +53,9 @@ flight_min, flight_exit, flight_dist = sort_flight_minima(data, min_loc)
 chain = []
 time_saved = []
 time_single = []
+timestamp = []
+entrytime = []
+
 
 for i in range(len(flight_min)):
     time_saved_i = redirect_flight(flight_min, flight_exit, i, tol=30) / 60
@@ -60,6 +63,8 @@ for i in range(len(flight_min)):
     chain.append(len(time_saved_i) - 1)
     time_saved.append(np.sum(time_saved_i))
     time_single.append(time_saved_i[0])
+    timestamp.append(flight_exit[i])
+    entrytime.append(flight_min[i][0])
 
 # print(chain)
 # print(time_saved)
@@ -70,3 +75,5 @@ print(count_sel_prob)
 np.savetxt(f"{savedir}/chain_{case}_{dstr}.txt", chain)
 np.savetxt(f"{savedir}/ts_{case}_{dstr}.txt", time_saved)
 np.savetxt(f"{savedir}/ts1_{case}_{dstr}.txt", time_single)
+np.savetxt(f"{savedir}/timestamp_{case}_{dstr}.txt", timestamp)
+np.savetxt(f"{savedir}/entrytime_{case}_{dstr}.txt", entrytime)

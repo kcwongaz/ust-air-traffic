@@ -7,8 +7,8 @@ from loop_helpers import *
 
 # --------------------------------------------------------------------------- #
 # Target datetime range to plot flight on; UTC 16:00 is HKT 00:00
-target_start = pd.to_datetime("2017-01-01 00:00", format=r"%Y-%m-%d %H:%M")
-target_end = pd.to_datetime("2017-12-31 23:59", format=r"%Y-%m-%d %H:%M")
+target_start = pd.to_datetime("2018-01-01 00:00", format=r"%Y-%m-%d %H:%M")
+target_end = pd.to_datetime("2018-12-31 23:59", format=r"%Y-%m-%d %H:%M")
 target_start_str = target_start.strftime(r"%Y%m%d_%H%M")
 target_end_str = target_end.strftime(r"%Y%m%d_%H%M")
 dstr = f"{target_start_str}-{target_end_str}"
@@ -22,7 +22,7 @@ plt.rcParams.update({
     "font.sans-serif": ["Helvetica"]}
 )
 
-savefig = True
+savefig = False
 
 
 # --------------------------------------------------------------------------- #
@@ -68,6 +68,7 @@ if mode == 1:
 elif mode == 2:
 
     hist[1:-1] = hist[1:-1] - hist[2:]
+    print(np.sum(np.arange(len(hist)) * hist))
 
     ax.bar(centers, hist, color="salmon")
     ax.set_xticks(centers)

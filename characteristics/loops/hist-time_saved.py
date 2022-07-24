@@ -7,8 +7,8 @@ from loop_helpers import *
 
 # --------------------------------------------------------------------------- #
 # Target datetime range to plot flight on; UTC 16:00 is HKT 00:00
-target_start = pd.to_datetime("2017-01-01 00:00", format=r"%Y-%m-%d %H:%M")
-target_end = pd.to_datetime("2017-12-31 23:59", format=r"%Y-%m-%d %H:%M")
+target_start = pd.to_datetime("2018-01-01 00:00", format=r"%Y-%m-%d %H:%M")
+target_end = pd.to_datetime("2018-12-31 23:59", format=r"%Y-%m-%d %H:%M")
 target_start_str = target_start.strftime(r"%Y%m%d_%H%M")
 target_end_str = target_end.strftime(r"%Y%m%d_%H%M")
 dstr = f"{target_start_str}-{target_end_str}"
@@ -16,20 +16,22 @@ dstr = f"{target_start_str}-{target_end_str}"
 datadir = f"/home/kc/Research/air_traffic/data/redirection"
 savedir = f"/home/kc/Research/air_traffic/figures/2022-04-26"
 
-mode = 3
+mode = 1
 
 plt.rcParams.update({
     "font.family": "serif",
     "font.sans-serif": ["Helvetica"]}
 )
 
-savefig = True
+savefig = False
 
 # --------------------------------------------------------------------------- #
 
 if mode == 1:
     ts = np.loadtxt(f"{datadir}/ts_all_{dstr}.txt")
+    print(len(ts))
     ts = ts[np.nonzero(ts)]
+    print(len(ts))
 
     fig, ax = plt.subplots()
 
@@ -42,9 +44,14 @@ if mode == 1:
     ax.set_title("Histogram of Total Time Saved (2017)", fontsize=16)
 
     print("Max: ", np.max(ts))
+    print("Min: ", np.min(ts))
+    print("Mean: ", np.mean(ts))
+    print("SD: ", np.std(ts), np.std(ts, ddof=1))
+
+
     plt.tight_layout()
     if savefig:
-        plt.savefig(f"{savedir}/hist_s.png", dpi=300)
+        plt.savefig(f"{savedir}/hist_s_{dstr}.png", dpi=300)
     plt.show()
 
 
@@ -62,9 +69,14 @@ elif mode == 2:
     ax.set_ylabel("Count")
     ax.set_title("Histogram of First-step Time Saved (2017)", fontsize=16)
 
+    print("Max: ", np.max(ts))
+    print("Min: ", np.min(ts))
+    print("Mean: ", np.mean(ts))
+    print("SD: ", np.std(ts), np.std(ts, ddof=1))
+
     plt.tight_layout()
     if savefig:
-        plt.savefig(f"{savedir}/hist_s1.png", dpi=300)
+        plt.savefig(f"{savedir}/hist_s1_{dstr}.png", dpi=300)
     plt.show()
 
 
