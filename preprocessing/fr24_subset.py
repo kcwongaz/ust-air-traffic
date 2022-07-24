@@ -8,12 +8,12 @@ import random
 
 # --------------------------------------------------------------------------- #
 # Date to start and end searching
-start_date = pd.to_datetime("2017-01-20", format=r"%Y-%m-%d")
-end_date = pd.to_datetime("2017-01-22", format=r"%Y-%m-%d")
+start_date = pd.to_datetime("2017-01-01", format=r"%Y-%m-%d")
+end_date = pd.to_datetime("2018-12-31", format=r"%Y-%m-%d")
 
 # Target datetime range to plot flight on, specified in HKT
-target_start = pd.to_datetime("2017-01-22 15:00", format=r"%Y-%m-%d %H:%M")
-target_end = pd.to_datetime("2017-01-22 16:00", format=r"%Y-%m-%d %H:%M")
+target_start = pd.to_datetime("2017-01-01 00:00", format=r"%Y-%m-%d %H:%M")
+target_end = pd.to_datetime("2018-12-31 23:59", format=r"%Y-%m-%d %H:%M")
 
 
 datadir = f"/home/kc/Research/air_traffic/data/fr24_clean"
@@ -39,6 +39,8 @@ while working_date <= end_date:
         for file in files:
             fname = os.path.join(subdir, file)
             print(fname)
+            if file == ".csv":
+                continue
 
             df = pd.read_csv(fname, header=0)
 
