@@ -2,7 +2,8 @@ import pandas as pd
 import os
 
 
-def read_trajectories_range(datadir, start, end, verbose=False):
+def read_trajectories_range(datadir, start, end, verbose=False,
+                            fname_only=False):
 
     start_date = pd.to_datetime(start)
     end_date = pd.to_datetime(end)
@@ -23,7 +24,10 @@ def read_trajectories_range(datadir, start, end, verbose=False):
         if not os.path.exists(f"{datadir}/{mstr}"):
             continue
 
-        yield read_trajectories(datadir, dstr)
+        if fname_only:
+            yield fetch_fnames(datadir, date)
+        else:
+            yield read_trajectories(datadir, dstr)
 
 
 def read_trajectories(datadir, date):
@@ -34,3 +38,13 @@ def read_trajectories(datadir, date):
         for file in files:
             fname = os.path.join(subdir, file)
             yield pd.read_csv(fname, header=0, index_col=0)
+
+
+def fetch_fnames(datadir, date):
+
+    path = os.path.join(datadir, date[:7], date)
+
+    for subdir, _, files in os.walk(path):
+        for file in files:
+            fname = os.path.join(subdir, file)
+            yield fname
