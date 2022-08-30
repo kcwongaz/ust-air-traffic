@@ -12,7 +12,7 @@ Some example analyses can be found in the notebooks.
 
 # Getting Started
 
-## 1 - Setting up
+### 1 - Setting up
 I suggest installing the code locally, e.g.
 
 ```bash
@@ -25,7 +25,7 @@ This project requires the standard scientific packages, `numpy`, `scipy`, `matpl
 
 <br>
 
-## 2 - Data
+### 2 - Data
 An example dataset can be downloaded here. 
 
 The example dataset contains the flight data in Jan 2017. Decompressing the data to `data/` at the project root should get the jupyter notebooks running.
@@ -40,7 +40,7 @@ The scripts in `pipeline/` perform successive processing to prepare the data, e.
 
 <br>
 
-## 3 - The package
+### 3 - The package
 
 Inside `air_traffic/`:
  - `FR24Writer.py`, `filters.py`:  for processing raw data
