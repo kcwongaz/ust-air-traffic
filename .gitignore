@@ -1,6 +1,11 @@
 .vscode/
 data/
+raw/
+archive/
+archive_data/
 figures/
+sketch/
+thesis/
 
 
 # --------------------------------------------------------------------------- #
