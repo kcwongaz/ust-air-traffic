@@ -65,17 +65,17 @@ def loop_write(dataset, savename):
 
                 df = df.loc[df["distance"] <= 200]
                 dist = df["distance"].to_numpy()
+                time = df["time"].to_numpy()
 
                 min_loc = lp.locate_loops(dist)
 
-                _, min_time = lp.find_minima_spacetime(dist[:,1], dist[:,0],
-                                                       min_loc)
+                _, min_time = lp.find_minima_spacetime(dist, time, min_loc)
 
                 # Skip if no loop is found
                 if len(min_time) == 0:
                     continue
 
-                _, exit_time = lp.find_exitpoint(dist[:,1], dist[:,0], min_loc)
+                _, exit_time = lp.find_exitpoint(dist, time, min_loc)
 
                 # Determine entry direction thus the holding area
                 if df["longitude"].iloc[0] < 114:

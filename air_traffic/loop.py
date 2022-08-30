@@ -107,31 +107,7 @@ def find_exitpoint(dist, time, min_loc):
     return exit_dist, exit_time
 
 
-def label_flight_loops(flight_dict):
-    """
-    Generate a dict labeling where the loops locate in each flight.
-    This is done by finding which candidate regions out of 'locations' has
-    the most numbr of loops.
-
-    If there are no loop, it will just label the flight to have the first
-    loop region. This should not cause a problem, because upon find_minima()
-    in the area, the loop search will return [].
-
-    It is acutally not necessary to complete distinguish the three loops area,
-    just locating whether the loops are in the upper of lower region in the
-    spacetime graph is sufficent for my purpose. The tricker part is flight
-    from North always produces a 'fake' loop.
-    """
-
-    min_loc = {}
-
-    for key in flight_dict:
-        min_loc[key] = locate_loops(flight_dict[key])
-
-    return min_loc
-
-
-def locate_loops(flight):
+def locate_loops(dist):
     """
     Locate the loop location for a single flight.
     """
@@ -139,7 +115,6 @@ def locate_loops(flight):
     # It is not necessary to completely distinguish the three loops areas
     locations = [(70, 80), (90, 130)]
 
-    dist = flight[:, 1]
     loop_num = [len(find_minima(dist, loc)) for loc in locations]
     min_loc = locations[np.argmax(loop_num)]
 
@@ -216,6 +191,29 @@ def detect_selection_problem(flight_min, flight_exit, tol=60):
 # they should probably be removed.
 # --------------------------------------------------------------------------- #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! #
+def label_flight_loops(flight_dict):
+    """
+    Generate a dict labeling where the loops locate in each flight.
+    This is done by finding which candidate regions out of 'locations' has
+    the most numbr of loops.
+
+    If there are no loop, it will just label the flight to have the first
+    loop region. This should not cause a problem, because upon find_minima()
+    in the area, the loop search will return [].
+
+    It is acutally not necessary to complete distinguish the three loops area,
+    just locating whether the loops are in the upper of lower region in the
+    spacetime graph is sufficent for my purpose. The tricker part is flight
+    from North always produces a 'fake' loop.
+    """
+
+    min_loc = {}
+
+    for key in flight_dict:
+        min_loc[key] = locate_loops(flight_dict[key])
+
+    return min_loc
+
 
 def sort_flight_keys(flight_dict, min_loc):
 
