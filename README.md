@@ -2,7 +2,7 @@
 
 Using historical flight trajectory data, can you come up with a quantitive strategy for mitigating flight delay?
 
-This is a project I have worked on with Prof. Michael K. Y. Wong and Prof. Rhea Liem during my MPhil at HKUST. A detailed description of this project can be found in Chapter 4 of my [MPhil thesis](https://drive.google.com/file/d/1wgr3l9psxnW8qiUr-FL-vXN2wRbjcxAC/view?usp=sharing).
+This is a project I worked with Prof. Michael K. Y. Wong and Prof. Rhea Liem during my MPhil at HKUST. A detailed description of this project can be found in Chapter 4 of my [MPhil thesis](https://drive.google.com/file/d/1wgr3l9psxnW8qiUr-FL-vXN2wRbjcxAC/view?usp=sharing).
 
 This repo contains the code I developed for analyzing historical flight trajectories around the Hong Kong International Airport (HKIA). The flight data used was originally obtained by Prof. Lishuai Li from the City University of Hong Kong and shared with us. Special thanks to Prof. Li for allowing me to release part of the flight data in this repo.
 
