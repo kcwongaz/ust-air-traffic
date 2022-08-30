@@ -1,24 +1,20 @@
 import os
 import json
 import pickle
-import shutil
-import zipfile
 
-from FR24Writer import FR24Writer
+from air_traffic.FR24Writer import FR24Writer
 
 
 # --------------------------------------------------------------------------- #
 # User inputs
 
 # Locations to read data from
-# All the .bz2 files and top level .zip files are expected to be decompressed.
-# (e.g. 01.tar.bz2, 02.zip, etc.)
-# So that the directories have all the yyyymmdd.zip files.
-# Make sure all yyyymmdd.zip are there, or you will miss some time points.
-dataroot = "/mnt/Passport/Lishuai_data/USA"
+# All files are expected to be fully decompressed,
+# so that in the directory you should see the bare .json / .txt files
+dataroot = "../raw"
 
 # Locations to store data to
-saveroot = "/home/kc/Research/air_traffic/data/fr24_usa"
+saveroot = "../data/extracted"
 
 # Location for a pickled FR24Writer object to be restored.
 # This is for continuing a partial flight extraction.
@@ -26,22 +22,8 @@ saveroot = "/home/kc/Research/air_traffic/data/fr24_usa"
 # Each sucessful run will generate a FR24Writer.pickle for use
 restore_loc = ""
 
-
-# (!!!) Some suggestions
-# Do the extraction for one geographic area per run.
-# i.e. set dataroot ".../Lishuai_data/china/" instead of ".../Lishuai_data/"
-# When start for a new area, always set restore_loc = ""
-# These should prevent some potential problems that I haven't fully tested.
-#
-# You can also do it year-by-year or month-by-month like
-#   dataroot = "/mnt/Passport/Lishuai_data/china/2017/"
-# But when you continue to the next year, remember to set restore_loc
-# so that you pick up the flights that have not landed in the previous year.
-
 # --------------------------------------------------------------------------- #
 # *** Main program starts here
-
-# Initialize flight writer
 if restore_loc == "":
     flights = FR24Writer(saveroot)
 else:
@@ -53,10 +35,6 @@ cutoff_time = 0
 # Create the working directories if not already there
 if not os.path.exists(saveroot):
     os.makedirs(saveroot, exist_ok=True)
-
-tempdir = f"{saveroot}/temp"
-if not os.path.exists(tempdir):
-    os.makedirs(tempdir, exist_ok=True)
 
 # Start the log
 log_writer = open(f"{saveroot}/fr24_extract.log", "a")
@@ -72,79 +50,38 @@ for root, dirs, files in os.walk(dataroot):
     dirs.sort()
     files.sort()
 
-    # 1. Copy the yyyymmdd.zip files to local working directory
     for file in files:
-        if file.endswith(".zip") and len(file) >= 12:
-            fname = os.path.join(root, file)
-            shutil.copy(fname, tempdir)
-
-            log_writer.write(f"Found: {fname} \r\n")
-            print(f"Found: {fname}")
-
-    # 2. Unzip all the copied .zip files
-    for file in os.listdir(tempdir):
-        if not file.endswith(".zip"):
+        # Skip files that are not json, e.g. any leftover zip files
+        if not file.endswith(".json") and not file.endswith(".txt"):
             continue
+        fname = os.path.join(root, file)
+        print(fname)
 
-        # Have to unzip file one-by-one, because some files may contain error
-        zf = zipfile.ZipFile(os.path.join(tempdir, file), "r")
-        for zf_child in zf.namelist():
+        with open(fname, "r") as f:
             try:
-                zf.extract(zf_child, tempdir)
-            except zipfile.BadZipFile:
-                log_writer.write(f"Error unzipping {zf}/{zf_child} \r\n")
-        zf.close()
-
-    # 3. Now loop through the unzipped .json file to extract flights
-    for troot, tdirs, tfiles in os.walk(tempdir):
-        tdirs.sort()
-        tfiles.sort()
-
-        for tfile in tfiles:
-            if not tfile.endswith(".json") and not tfile.endswith(".txt"):
-                continue
-            fname = os.path.join(troot, tfile)
-
-            if os.stat(fname).st_size == 0:
-                log_writer.write(f"Empty JSON file: {fname} \r\n")
+                json_data = json.load(f)
+                timestamp_fetched = False
+            except json.JSONDecodeError:
+                log_writer.write(f"Error encountered on: {fname} \r\n")
                 continue
 
-            with open(fname, "r") as f:
-                try:
-                    json_data = json.load(f)
-                    timestamp_fetched = False
-                    print(fname)
-                except json.JSONDecodeError:
-                    log_writer.write(f"Error encountered on: {fname} \r\n")
+            for key, item in json_data.items():
+                # Each json file contains some useless meta-data,
+                # actual flight data take shape of a list
+                if not isinstance(item, list):
                     continue
 
-                for key, item in json_data.items():
-                    # Each json file contains some useless meta-data,
-                    # actual flight data take shape of a list
-                    if not isinstance(item, list):
-                        continue
+                # Pick only flights that are coming to HK
+                if item[12] != "HKG":
+                    continue
 
-                    # The data row also need to have the correct length
-                    # Expecting length 18, but some can have 19 for some reason
-                    if len(item) < 18:
-                        log_writer.write(f"Error encountered on: {fname} \r\n")
-                        continue
+                # Read the timestamp for the current file and read only once
+                # Do one push every 24 hours = 86400 seconds
+                if not timestamp_fetched and (item[10] - cutoff_time >= 86400):
+                    cutoff_time = item[10]
+                    flights.push(cutoff_time)
 
-                    # Pick only flights that are coming to HK
-                    if item[12] != "HKG":
-                        continue
-
-                    # Read the timestamp for the current file only once
-                    # Do one push every 24 hours = 86400 seconds
-                    if not timestamp_fetched and (item[10] - cutoff_time >= 86400):
-                        cutoff_time = item[10]
-                        flights.push(cutoff_time)
-
-                    flights.write(key, item)
-
-    # Done with this round, empty the temp directory
-    shutil.rmtree(tempdir)
-    os.makedirs(tempdir, exist_ok=True)
+                flights.write(key, item)
 
 
 # One last push before finishing.

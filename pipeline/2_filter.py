@@ -2,22 +2,22 @@ import numpy as np
 import pandas as pd
 import os
 
-from checkers import *
+from air_traffic.filters import *
 
 
 # --------------------------------------------------------------------------- #
 
 # Will apply filter to all trajectories within this date range
-start_date = "2016-12-31"
-end_date = "2021-04-28"
+start_date = "2017-01-01"
+end_date = "2017-01-31"
 
 
 # (!) Change the following to appropriate directory names
 # Location of raw data
-dataroot = "/home/kc/Research/air_traffic/data/fr24_china/"
+dataroot = "../data/extracted"
 
 # Location for output
-copyroot = "/home/kc/Research/air_traffic/data/fr24_clean/"
+copyroot = "../data/cleaned"
 
 # mode should be in of ["copy", "list", ""]
 # "copy" will create a filtered copy of the data in copyroot
@@ -62,8 +62,8 @@ if mode == "list":
 while date <= end:
     dstr = date.strftime(date_fmt)
     mstr = date.strftime("%Y-%m")
-    datadir = dataroot + mstr + "/" + dstr
-    copydir = copyroot + mstr + "/" + dstr
+    datadir = dataroot + "/" + mstr + "/" + dstr
+    copydir = copyroot + "/" + mstr + "/" + dstr
 
     # Create destination directory if not exist
     if not os.path.exists(copydir) and mode == "copy":
