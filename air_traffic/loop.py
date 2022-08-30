@@ -226,7 +226,7 @@ def reschedule_flight(flight_min, flight_exit, target, tol=60):
     """
     Intake a sorted list of flight loop minima and the corresponding exit points,
     then compute the time saved after the target flight (indexed by exit order)
-    got redirected.
+    got rescheduled.
     """
 
     s = []
