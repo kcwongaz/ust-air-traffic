@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import numpy as np
 
 from air_traffic.trajectory import *
 
@@ -25,6 +24,10 @@ data = {"date": [],             # Date
         "delta_r_km": [],       # Distance between entry and final point in km
         "delta_t_sec": []}      # Time difference in second
 
+
+# Create destination directory if not exist
+if not os.path.exists(savedir):
+    os.makedirs(savedir, exist_ok=True)
 
 for subdir, dirs, files in os.walk(datadir):
 

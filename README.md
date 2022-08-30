@@ -28,7 +28,7 @@ This project requires the standard scientific packages, `numpy`, `scipy`, `matpl
 ## 2 - Data
 An example dataset can be downloaded here. 
 
-The example dataset contains the flight data in Jan 2017. Decompressing the data to `data/` at the project root should get the jupyter notebooks to run.
+The example dataset contains the flight data in Jan 2017. Decompressing the data to `data/` at the project root should get the jupyter notebooks running.
 
 If you are interested to see the raw data, here is an example dataset. The raw data is quite large in file size, so I can only provide 3 days of data. To process the raw data, decompress the raw data to `raw/` at the project root, then run
 
@@ -40,9 +40,9 @@ The scripts in `pipeline/` perform successive processing to prepare the data, e.
 
 <br>
 
-## 3 - Quick walkthrough
+## 3 - The package
 
-`air_traffic/`: main package
+Inside `air_traffic/`:
  - `FR24Writer.py`, `filters.py`:  for processing raw data
  - `io.py`:  I/O handlers
  - `loop.py`:  module for analyzing holding patterns and rescheduling
