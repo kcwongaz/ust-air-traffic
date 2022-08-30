@@ -26,11 +26,11 @@ This project requires the standard scientific packages, `numpy`, `scipy`, `matpl
 <br>
 
 ### 2 - Data
-An example dataset can be downloaded here. 
+An example dataset can be downloaded [here](https://drive.google.com/file/d/16x6CkRo7pJmwQVzqZOtbD0CiG1tGGGlG/view?usp=sharing). 
 
 The example dataset contains the flight data in Jan 2017. Decompressing the data to `data/` at the project root should get the jupyter notebooks running.
 
-If you are interested to see the raw data, here is an example dataset. The raw data is quite large in file size, so I can only provide 3 days of data. To process the raw data, decompress the raw data to `raw/` at the project root, then run
+If you are interested to see the raw data, [here](https://drive.google.com/file/d/12otmDSjLT3scv2v_SWaMN4ZOLrHFzCME/view?usp=sharing) is an example dataset. The raw data is quite large in file size, so I can only provide 3 days of data. To process the raw data, decompress the raw data to `raw/` at the project root, then run
 
 ```bash
 . ./pipeline/start.sh 
