@@ -29,7 +29,7 @@ def read_trajectories_range(datadir, start, end, verbose=False,
             continue
 
         if fname_only:
-            yield fetch_fnames(datadir, date)
+            yield fetch_fnames(datadir, dstr)
         else:
             yield read_trajectories(datadir, dstr)
 
@@ -41,7 +41,7 @@ def read_trajectories(datadir, date):
     for subdir, _, files in os.walk(path):
         for file in files:
             fname = os.path.join(subdir, file)
-            yield pd.read_csv(fname, header=0, index_col=0)
+            yield pd.read_csv(fname, header=0)
 
 
 def fetch_fnames(datadir, date):
@@ -71,7 +71,7 @@ def loop_write(dataset, savename):
                 _, min_time = lp.find_minima_spacetime(dist[:,1], dist[:,0],
                                                        min_loc)
 
-                # No loop then skip
+                # Skip if no loop is found
                 if len(min_time) == 0:
                     continue
 
@@ -113,6 +113,7 @@ def loop_read_area(fname):
 
     for entry in data_all:
         area = entry[0]
+
         data[area].append(entry[1:])
 
     return data

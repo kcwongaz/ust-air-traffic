@@ -1,4 +1,4 @@
-from geopy import distance
+import geopy.distance as gd
 
 
 def find_first_landed(df):
@@ -43,7 +43,7 @@ def distance(row1, row2):
     point1 = (row1["latitude"], row1["longitude"])
     point2 = (row2["latitude"], row2["longitude"])
 
-    d = distance.distance(point1, point2).km
+    d = gd.distance(point1, point2).km
     return d
 
 
@@ -52,5 +52,5 @@ def distance_hkia(row):
     hkia = (22.308046, 113.918480)
     point = (row["latitude"], row["longitude"])
 
-    d = distance.distance(point, hkia).km
+    d = gd.distance(point, hkia).km
     return d
